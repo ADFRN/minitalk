@@ -6,7 +6,7 @@
 /*   By: afournie <afournie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:13:49 by afournie          #+#    #+#             */
-/*   Updated: 2026/01/20 10:46:16 by afournie         ###   ########.fr       */
+/*   Updated: 2026/01/21 13:15:57 by afournie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	main(int argc, char **argv)
 	struct sigaction	sa;
 
 	if (argc != 3)
-		return (ft_printf("Error\n"), 1);
+		return (ft_printf("Error - PID required first, then message\n"), 1);
 	sa.sa_handler = confirm;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
@@ -64,6 +64,6 @@ int	main(int argc, char **argv)
 	send_bits(pid, '\n');
 	while (g_received != 2)
 		pause();
-	ft_printf("Message reçu par le serveur !\n");
+	ft_printf("Copy\n");
 	return (0);
 }

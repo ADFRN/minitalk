@@ -6,7 +6,7 @@
 /*   By: afournie <afournie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:14:01 by afournie          #+#    #+#             */
-/*   Updated: 2026/01/20 10:47:54 by afournie         ###   ########.fr       */
+/*   Updated: 2026/01/21 13:11:46 by afournie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	ft_handler(int signal, siginfo_t *info, void *context)
 		bit = 0;
 		i = 0;
 	}
+	usleep(100);
 	kill(info->si_pid, SIGUSR1);
 }
 
@@ -45,7 +46,7 @@ int	main(int argc, char **argv)
 
 	(void)argv;
 	if (argc != 1)
-		return (ft_printf("Error\n"), 0);
+		return (ft_printf("Error - No arguments required here\n"), 0);
 	pid = getpid();
 	ft_printf("PID : %d\n", pid);
 	sa.sa_sigaction = ft_handler;
