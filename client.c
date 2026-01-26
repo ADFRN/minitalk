@@ -6,7 +6,7 @@
 /*   By: afournie <afournie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:13:49 by afournie          #+#    #+#             */
-/*   Updated: 2026/01/21 13:15:57 by afournie         ###   ########.fr       */
+/*   Updated: 2026/01/26 09:59:44 by afournie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,15 @@ int	main(int argc, char **argv)
 	struct sigaction	sa;
 
 	if (argc != 3)
-		return (ft_printf("Error - PID required first, then message\n"), 1);
+		return (ft_printf("Error - PID required first, then the message\n"), 1);
 	sa.sa_handler = confirm;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	pid = ft_atoi(argv[1]);
+	if (pid <= 0)
+		return (ft_printf("Error - You trying something wrong\n"), 1);
 	i = 0;
 	while (argv[2][i] != '\0')
 	{
