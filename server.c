@@ -6,7 +6,7 @@
 /*   By: afournie <afournie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:14:01 by afournie          #+#    #+#             */
-/*   Updated: 2026/01/21 13:11:46 by afournie         ###   ########.fr       */
+/*   Updated: 2026/01/27 16:42:19 by afournie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,18 @@ void	ft_handler(int signal, siginfo_t *info, void *context)
 	bit++;
 	if (bit == 8)
 	{
-		if (i == '\n')
+		if (i == '\0')
 		{
-			ft_printf("\n");
 			kill(info->si_pid, SIGUSR2);
+			bit = 0;
+			i = 0;
+			return ;
 		}
 		else
-			ft_printf("%c", i);
+			write(1, &i, 1);
 		bit = 0;
 		i = 0;
 	}
-	usleep(100);
 	kill(info->si_pid, SIGUSR1);
 }
 
@@ -52,6 +53,8 @@ int	main(int argc, char **argv)
 	sa.sa_sigaction = ft_handler;
 	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
+	sigaddset(&sa.sa_mask, SIGUSR1);
+	sigaddset(&sa.sa_mask, SIGUSR2);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	while (argc == 1)

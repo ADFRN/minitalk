@@ -6,7 +6,7 @@
 /*   By: afournie <afournie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:13:49 by afournie          #+#    #+#             */
-/*   Updated: 2026/01/26 09:59:44 by afournie         ###   ########.fr       */
+/*   Updated: 2026/01/27 16:35:09 by afournie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	send_bits(int pid, char i)
 		else
 			kill(pid, SIGUSR2);
 		while (g_received == 0)
-			pause();
+			usleep(10);
 		bit--;
 	}
 }
@@ -63,9 +63,9 @@ int	main(int argc, char **argv)
 		send_bits(pid, argv[2][i]);
 		i++;
 	}
-	send_bits(pid, '\n');
+	send_bits(pid, '\0');
 	while (g_received != 2)
-		pause();
+		usleep(1);
 	ft_printf("Copy\n");
 	return (0);
 }
