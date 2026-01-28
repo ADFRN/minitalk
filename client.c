@@ -6,66 +6,67 @@
 /*   By: afournie <afournie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 17:13:49 by afournie          #+#    #+#             */
-/*   Updated: 2026/01/27 16:35:09 by afournie         ###   ########.fr       */
+/*   Updated: 2026/01/28 14:20:19 by afournie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include <signal.h>
 
-static volatile sig_atomic_t	g_received = 0;
+int		g_received = 0;
 
-static void	confirm(int signal)
+void	confirm(int signal)
 {
-	if (signal == SIGUSR1)
+	if (signal == SIGUSR2)
 		g_received = 1;
-	else if (signal == SIGUSR2)
+	if (signal == SIGUSR1)
 		g_received = 2;
 }
 
 void	send_bits(int pid, char i)
 {
 	int	bit;
+	int	timeout;
 
 	bit = 7;
 	while (bit >= 0)
 	{
 		g_received = 0;
-		if ((i & (0x01 << bit)) != 0)
+		if ((i >> bit) & 1)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-		while (g_received == 0)
-			usleep(10);
+		timeout = 0;
+		while (g_received == 0 && timeout < 1000)
+		{
+			usleep(100);
+			timeout++;
+		}
+		if (g_received == 0)
+		{
+			ft_printf("Error - No response from server (PID: %d)\n", pid);
+			exit(1);
+		}
 		bit--;
 	}
 }
 
 int	main(int argc, char **argv)
 {
-	int					pid;
-	int					i;
-	struct sigaction	sa;
+	int	pid;
+	int	i;
 
 	if (argc != 3)
 		return (ft_printf("Error - PID required first, then the message\n"), 1);
-	sa.sa_handler = confirm;
-	sa.sa_flags = 0;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
 	pid = ft_atoi(argv[1]);
 	if (pid <= 0)
 		return (ft_printf("Error - You trying something wrong\n"), 1);
+	signal(SIGUSR1, confirm);
+	signal(SIGUSR2, confirm);
 	i = 0;
-	while (argv[2][i] != '\0')
-	{
-		send_bits(pid, argv[2][i]);
-		i++;
-	}
+	while (argv[2][i])
+		send_bits(pid, argv[2][i++]);
 	send_bits(pid, '\0');
-	while (g_received != 2)
-		usleep(1);
 	ft_printf("Copy\n");
-	return (0);
+	return (EXIT_SUCCESS);
 }
